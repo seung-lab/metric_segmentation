@@ -9,15 +9,12 @@ class EMDataGenerator:
     >>> for em_img, segment_img in gen.flow(batch_size):
     >>>   process_batch(X,y)
   """
-  def __init__(self, directory, target_size, augment=False):
+  def __init__(self, directory, augment=False):
     """
     Args:
       directory: path containing data. See DirectoryIterator.exampleMap for more
-      target_size: size of volumes returned
       augment: augment returned batches
-      shuffle: shuffle batches between epochs
     """
-    self.target_size = target_size
     self.augment = augment
 
     self.em_data, self.seg_data = self.load_data(directory)
