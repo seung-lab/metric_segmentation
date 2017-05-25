@@ -17,11 +17,9 @@ def get_pair(A,offset, patch_size):
 
 	A1 = A[:,os1[0]:patch_size[0]-os2[0],
 		os1[1]:patch_size[1]-os2[1],
-		os1[2]:patch_size[2]-os2[2],
 		:]
 	A2 = A[:,os2[0]:patch_size[0]-os1[0],
 		os2[1]:patch_size[1]-os1[1],
-		os2[2]:patch_size[2]-os1[2],
 		:]
 	return (A1, A2)
 
@@ -29,13 +27,13 @@ def affinity(x, y):
 	displacement = x - y
 	interaction = tf.reduce_sum(
 		displacement * displacement,
-		reduction_indices=[4],
+		reduction_indices=[3],
 		keep_dims=True)
 	return tf.exp(-0.5 * interaction)
 
 #We will only count edges with at least one endpoint in mask
 def long_range_loss_fun(vec_labels, human_labels, offsets, mask):
-	patch_size = static_shape(vec_labels)[1:4]
+	patch_size = static_shape(vec_labels)[1:3]
 	cost = 0
 	otpts = {}
 

@@ -48,9 +48,21 @@ class EMDataGenerator:
     seg_img = self.seg_data[i]
 
     # crop region
-    x,y = em_img.shape
-    em_img = em_img[(j%2)*x//2:(j%2+1)*x//2, (j%2)*y//2:(j%2+1)*y//2]
-    seg_img = seg_img[(j%2)*x//2:(j%2+1)*x//2, (j%2)*y//2:(j%2+1)*y//2]
+    if j == 0:
+      dx = 0
+      dy = 0
+    if j == 1:
+      dx = 1024-573
+      dy = 0
+    if j == 2:
+      dx = 0
+      dy = 1024 - 573
+    if j == 3:
+      dx = 1024-573
+      dy = 1024-573
+
+    em_img = em_img[dx:dx+572, dy: dy+572]
+    seg_img = seg_img[dx:dx+572, dy: dy+572]
 
     # add channel dimension
     em_img = np.expand_dims(em_img, axis=-1)
