@@ -14,7 +14,7 @@ mask = tf.constant(np.ones((1, params['height'], params['width'], 1)), dtype=tf.
 human_labels = tf.placeholder(dtype=tf.int32, shape=(1,params['height'], params['width'], 1))
 
 # Create loss tensor
-pix = (0,1,2,8)
+pix = (0,1,2,16)
 offsets = []
 for i in pix:
   for j in pix:
