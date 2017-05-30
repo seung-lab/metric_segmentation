@@ -6,7 +6,7 @@ from loss import long_range_loss_fun
 from provider import EMDataGenerator
 
 # Create params of graph
-params = {'height': 572, 'width': 572, 'embed_dim': 32}
+params = {'height': 572, 'width': 572, 'embed_dim': 64}
 
 # Create input, output placeholders
 em_input, vec_labels = create_UNet(params)
@@ -14,11 +14,17 @@ mask = tf.constant(np.ones((1, params['height'], params['width'], 1)), dtype=tf.
 human_labels = tf.placeholder(dtype=tf.int32, shape=(1,params['height'], params['width'], 1))
 
 # Create loss tensor
-offsets = [(0,0,5), (0,5,0), (5,0,0)]
+pix = (0,1,2,8)
+offsets = []
+for i in pix:
+  for j in pix:
+      if (i,j) != (0,0):
+        offsets.append((i,j))
+print(offsets)
 loss, outputs = long_range_loss_fun(vec_labels, human_labels, offsets, mask)
 
 # Create train op
-optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.001)
+optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
 train_op = optimizer.minimize(loss)
 
 # Initialize data provider
@@ -37,7 +43,7 @@ summary_op = tf.summary.merge_all()
 saver = tf.train.Saver()
 
 # Train
-max_steps = 1000
+max_steps = 100000
 for i in range(max_steps):
   em_input_data, human_label_data = em.next_batch(1)
   feed_dict = {em_input: em_input_data, human_labels: human_label_data}
@@ -47,8 +53,8 @@ for i in range(max_steps):
   # Checkpoint and monitor
   writer.add_summary(summary, i)
 
-  if i % 10 == 0:
+  if i % 1000 == 0:
     saver.save(sess, "./saved/model.ckpt")
     vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
-    np.save('saved/vec_labels', vec_label_data)
-    np.save('saved/human_labels', human_label_data)
+    np.save('saved/vec_labels{}'.format(i), vec_label_data)
+    np.save('saved/human_labels{}'.format(i), human_label_data)
