@@ -67,7 +67,7 @@ def upsample_block(side_inputs, up_inputs, filters, crop):
   """
   up_a = Cropping2D(cropping=crop)(side_inputs)
   up_b = UpSampling2D(size=(2,2))(up_inputs)
-  up_b = Convolution2D(filters//2, kernel_size=(2,2), padding='same')(up_b)
+  up_b = Convolution2D(filters, kernel_size=(2,2), padding='same')(up_b)
   up = Concatenate()([up_a, up_b])
 
   conv = Convolution2D(filters, (3, 3), activation='relu', padding='valid')(up)
