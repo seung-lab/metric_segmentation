@@ -17,7 +17,7 @@ def create_UNet(params):
     input: input tensor
     output: output tensor
   """
-  height, width = params['height'], params['width']
+  height, width = params['in_height'], params['in_width']
   embed_dim = params['embed_dim']
   # Create layers
   inputs = Input(shape=(height, width, 1))
@@ -26,11 +26,11 @@ def create_UNet(params):
   conv1 = Convolution2D(64, (3, 3), activation='relu', padding='valid')(conv0)
   conv2 = downsample_block(conv1, 128)
   conv3 = downsample_block(conv2, 256)
-  #conv4 = downsample_block(conv3, 512)
-  #conv5 = downsample_block(conv4, 1024)
+  conv4 = downsample_block(conv3, 512)
+  conv5 = downsample_block(conv4, 1024)
 
-  #up1 = upsample_block(conv4, conv5, 512, (4,4))
-  #up2 = upsample_block(conv3, up1, 256, (16,16))
+  up1 = upsample_block(conv4, conv5, 512, (4,4))
+  up2 = upsample_block(conv3, up1, 256, (16,16))
   up3 = upsample_block(conv2, up2, 128, (40,40))
   up4 = upsample_block(conv1, up3, 64, (88,88))
 
