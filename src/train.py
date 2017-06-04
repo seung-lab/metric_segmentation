@@ -27,12 +27,15 @@ with tf.variable_scope("loss"):
   loss, outputs = long_range_loss_fun(vec_labels, human_labels, offsets, mask)
 
 # Create train op
-optimizer = tf.train.AdamOptimizer(learning_rate=0.001)#, momentum=0.9)
+optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)#, momentum=0.9)
 train_op = optimizer.minimize(loss)
 
 # Initialize data provider
-em = EMDataGenerator("/usr/people/kluther/seungmount/research/datasets/SNEMI3D/AC3", 'train')
-em_dev = EMDataGenerator("/usr/people/kluther/seungmount/research/datasets/SNEMI3D/AC3", 'dev')
+#em = EMDataGenerator("/usr/people/kluther/seungmount/research/datasets/SNEMI3D/AC3", 'train')
+#em_dev = EMDataGenerator("/usr/people/kluther/seungmount/research/datasets/SNEMI3D/AC3", 'dev')
+direc = "/usr/people/kluther/Documents/metric_segmentation/data"
+em = EMDataGenerator(direc, 'train')
+em_dev = EMDataGenerator(direc, 'dev')
 
 # Initialize session
 init_op = tf.global_variables_initializer()
