@@ -13,7 +13,7 @@ def find_object_ids_centroids_vectors():
       Note that id = 2**16 * slice_no + original id (called slc_id)
   """
   # Load imgs
-  filename = "/usr/people/kluther/Documents/metric_segmentation/src/train.hdf5"
+  filename = "/usr/people/kluther/Documents/metric_segmentation/analysis/train.hdf5"
   em_imgs = h5py.File(filename,'r')['ids']
   vec_imgs = h5py.File(filename, 'r')['vecs']
 

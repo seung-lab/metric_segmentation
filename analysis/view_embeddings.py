@@ -1,3 +1,4 @@
+N = 10000
 #import matplotlib as mpl
 #mpl.use('Qt4Agg')
 
@@ -5,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from skimage import measure
 
-N = 60000
+
 thresh = 0.4
 
 # Load training imgs
