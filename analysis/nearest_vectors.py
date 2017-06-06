@@ -48,7 +48,12 @@ def affinity(v1,v2):
   return np.exp(-np.linalg.norm(v1-v2))
 
 def k_nearest_neighbors(vectors, obj_id, k):
-  """Returns the k objects with closest mean vectors"""
+  """Returns the k objects with closest mean vectors
+  Args:
+    vectors: dict of id, vec
+    obj_id: object id = 2**15*slice + id in slice
+    k: num objects
+  """
   vec_1 = vectors[obj_id]
   affinities = [(id_2, affinity(vec_1, vec_2)) for id_2, vec_2 in vectors.items() if obj_id != id_2]
   affinities = sorted(affinities, key=lambda x: x[1], reverse=True)
