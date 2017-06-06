@@ -1,0 +1,9 @@
+# Python
+__pycache__/
+.pyc
+
+# Data
+.hdf5
+
+# Non-source
+experiments/
