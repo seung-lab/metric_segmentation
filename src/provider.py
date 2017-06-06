@@ -112,4 +112,4 @@ class EMDataGenerator:
     if group == 'train':
       return em_images['main'][0:192], segmentations['main'][0:192]
     elif group == 'dev':
-      return em_images['main'][254:255], segmentations['main'][254:255]
+      return em_images['main'][192:], segmentations['main'][192:]
