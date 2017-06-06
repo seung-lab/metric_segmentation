@@ -7,31 +7,26 @@ import h5py
 # Create fn to find nearest object given a vector
 # Create fn to display these objects
 
-def find_object_ids_centroids_vectors():
+def find_object_ids_centroids_vectors(id_imgs, vec_imgs):
   """Returns dict (id, centroid) for all objects.
       Note that we treat objects in different slices as different objects
       Note that id = 2**16 * slice_no + original id (called slc_id)
   """
-  # Load imgs
-  filename = "/usr/people/kluther/Documents/metric_segmentation/analysis/train.hdf5"
-  em_imgs = h5py.File(filename,'r')['ids']
-  vec_imgs = h5py.File(filename, 'r')['vecs']
-
   # Iterate through each object
   centroids = {}
   vectors = {}
-  for i in range(len(em_imgs)):
-    em_img = em_imgs[i]
+  for i in range(len(id_imgs)):
+    id_img = id_imgs[i]
     vec_img = vec_imgs[i]
 
-    slc_ids = np.unique(em_img)
+    slc_ids = np.unique(id_img)
     #if i == 20: break
     if i % 10 == 0: print(i)
 #    import pdb; pdb.set_trace()
     for slc_id in slc_ids:
       if slc_id != 0:
         obj_id = i*2**15+slc_id
-        mask = np.expand_dims(em_img == slc_id, axis=-1)
+        mask = np.expand_dims(id_img == slc_id, axis=-1)
         centroid = compute_centroid(mask)
         centroid.append(i)
         mean_vector = compute_mean_vector(vec_img, mask)
