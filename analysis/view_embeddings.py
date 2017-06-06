@@ -1,4 +1,4 @@
-N = 10000
+N = 65000
 #import matplotlib as mpl
 #mpl.use('Qt4Agg')
 

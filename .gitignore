@@ -3,6 +3,9 @@ __pycache__/
 .pyc
 .ipynb_checkpoints/
 
+# Emacs 
+*~
+
 # Data
 *.hdf5
 
