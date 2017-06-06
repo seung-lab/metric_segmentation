@@ -26,17 +26,20 @@ class EMDataGenerator:
     # Get batch
     em_batch = []
     seg_batch = []
+    mask_batch = []
     for i in range(batch_size):
-      em, seg = self.next_example()
+      em, seg, mask = self.next_example()
       em_batch.append(em)
       seg_batch.append(seg)
+      mask_batch.append(mask)
 
     em_batch = np.array(em_batch)
     seg_batch = np.array(seg_batch)
+    mask_batch = np.array(mask_batch)
 
     # Preprocess examples
     # yield batch
-    return em_batch, seg_batch
+    return em_batch, seg_batch, mask_batch
 
   def next_example(self):
     """Returns next example and increments ptr"""
@@ -73,13 +76,17 @@ class EMDataGenerator:
     em_img = np.expand_dims(em_img, axis=-1)
     seg_img = np.expand_dims(seg_img, axis=-1)
 
+    # create mask
+    mask_img = np.ones_like(seg_img)
+    mask_img[seg_img==0] = 0
+
     # preprocess
     em_img = self.preprocess(em_img)
 
     # increment ptr
     self._ptr += 1
 
-    return em_img, seg_img
+    return em_img, seg_img, mask_img
 
   def preprocess(self, img):
     """Preprocess img, does mean subtraction
@@ -110,6 +117,6 @@ class EMDataGenerator:
     segmentations = h5py.File(os.path.join(directory, "human_labels.h5"), 'r')
 
     if group == 'train':
-      return em_images['main'][0:192], segmentations['main'][0:192]
+      return em_images['main'][:192], segmentations['main'][:192]
     elif group == 'dev':
       return em_images['main'][192:], segmentations['main'][192:]

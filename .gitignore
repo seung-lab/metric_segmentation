@@ -1,9 +1,10 @@
 # Python
 __pycache__/
 .pyc
+.ipynb_checkpoints/
 
 # Data
-.hdf5
+*.hdf5
 
 # Non-source
 experiments/
