@@ -25,9 +25,8 @@ def find_object_ids_centroids_vectors():
     vec_img = vec_imgs[i]
 
     slc_ids = np.unique(em_img)
-    if i == 20: break
-    print(i)
-    print(len(slc_ids))
+    #if i == 20: break
+    if i % 10 == 0: print(i)
 #    import pdb; pdb.set_trace()
     for slc_id in slc_ids:
       if slc_id != 0:
@@ -57,7 +56,7 @@ def k_nearest_neighbors(vectors, obj_id, k):
   """Returns the k objects with closest mean vectors"""
   vec_1 = vectors[obj_id]
   affinities = [(id_2, affinity(vec_1, vec_2)) for id_2, vec_2 in vectors.items() if obj_id != id_2]
-  affinities = sorted(affinities, key=lambda x: x[1])
+  affinities = sorted(affinities, key=lambda x: x[1], reverse=True)
 
   return affinities[:k]
 
