@@ -2,6 +2,8 @@ import numpy as np
 import h5py
 import os
 
+import augment
+
 class EMDataGenerator:
   """Generator for batches of EM images and their segmentations.
   example:
@@ -83,6 +85,9 @@ class EMDataGenerator:
     # preprocess
     em_img = self.preprocess(em_img)
 
+    # augment
+    em_img, seg_img = augment.augment_example(em_img, seg_img)
+    
     # increment ptr
     self._ptr += 1
 
