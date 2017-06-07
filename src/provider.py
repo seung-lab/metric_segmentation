@@ -68,8 +68,8 @@ class EMDataGenerator:
 
     em_img = em_img[dx:dx+572, dy: dy+572]
     seg_img = seg_img[dx:dx+572, dy: dy+572]
-    l = (572-388)//2
-    u = 388+l
+    l = (572-532)//2
+    u = 532+l
     seg_img = seg_img[l:u, l:u]
 
     # add channel dimension
