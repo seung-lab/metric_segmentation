@@ -1,6 +1,4 @@
-N = 65000
-#import matplotlib as mpl
-#mpl.use('Qt4Agg')
+N = 6000
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,14 +21,13 @@ v100 = np.load('vec_labels{}.npy'.format(N))[0]
 v100c = v100[:,:,0:3]
 h100 = np.load('human_labels{}.npy'.format(N))[0,:,:,0]
 
-d = 1
-d100 = np.load('vec_labels_dev{}_{}.npy'.format(N,d))[0]
+d100 = np.load('vec_labels_dev{}.npy'.format(N))[0]
 print(d100[100,100,:])
 
 #d100 = np.load('em_img_dev{}_0.npy'.format(N))[0]
 d100c = d100[:,:,0:3]
 
-de100 = np.load('em_img_dev{}_{}.npy'.format(N,d))[0,l:u,l:u,0]
+de100 = np.load('em_img_dev{}.npy'.format(N))[0,l:u,l:u,0]
 
 
 def gradient_norm(vec_field):
@@ -73,7 +70,7 @@ plt.subplot(2,4,8)
 
 
 labels = measure.label(gn>thresh, background=1)
-import pdb; pdb.set_trace()
+#import pdb; pdb.set_trace()
 plt.imshow(labels)
 
 
