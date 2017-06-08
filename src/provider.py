@@ -45,33 +45,23 @@ class EMDataGenerator:
 
   def next_example(self):
     """Returns next example and increments ptr"""
-    if self._ptr == len(self.em_data)*4:
+    if self._ptr == len(self.em_data):
       self._ptr = 0
 
-    i,j = self._ptr // 4, self._ptr % 4
-
+    i = self._ptr
+      
     # select slice
     em_img = self.em_data[i]
     seg_img = self.seg_data[i]
 
     # crop region
-    if j == 0:
-      dx = 0
-      dy = 0
-    if j == 1:
-      dx = 1024-573
-      dy = 0
-    if j == 2:
-      dx = 0
-      dy = 1024 - 573
-    if j == 3:
-      dx = 1024-573
-      dy = 1024-573
+    dx = np.random.randint(0,1024-572)
+    dy = np.random.randint(0,1024-572)
 
     em_img = em_img[dx:dx+572, dy: dy+572]
     seg_img = seg_img[dx:dx+572, dy: dy+572]
-    l = (572-532)//2
-    u = 532+l
+    l = (572-388)//2
+    u = 388+l
     seg_img = seg_img[l:u, l:u]
 
     # add channel dimension
@@ -80,7 +70,7 @@ class EMDataGenerator:
 
     # create mask
     mask_img = np.ones_like(seg_img)
-    mask_img[seg_img==0] = 0
+    mask_img[seg_img==0] = 1
 
     # preprocess
     em_img = self.preprocess(em_img)

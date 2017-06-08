@@ -3,7 +3,7 @@ import tensorflow as tf
 import os
 
 from model import create_UNet
-from loss import long_range_loss_fun
+from loss.j_loss import long_range_loss_fun
 from provider import EMDataGenerator
 
 def train(params):
@@ -26,11 +26,13 @@ def train(params):
         if (i,j) != (0,0):
           offsets.append((i,j))
 
+
+  #offsets = [(8,0)]
   with tf.variable_scope("loss"):
     loss, outputs = long_range_loss_fun(vec_labels, human_labels, offsets, mask_input)
 
   # Create train op
-  optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)#, momentum=0.9)
+  optimizer = tf.train.AdamOptimizer(learning_rate=0.001)#, momentum=0.9)
   train_op = optimizer.minimize(loss)
 
   # Initialize data provider
@@ -66,14 +68,15 @@ def train(params):
                   mask_input: mask_data_train}
     _, train_summary = sess.run([train_op, train_loss_summary], feed_dict=feed_dict)
 
-    feed_dict = {em_input: em_input_data_dev,
+    if i % 2 == 0:
+      feed_dict = {em_input: em_input_data_dev,
                   human_labels: human_label_data_dev,
                   mask_input: mask_data_dev}
-    valid_summary = sess.run(valid_loss_summary, feed_dict=feed_dict)
+      valid_summary = sess.run(valid_loss_summary, feed_dict=feed_dict)
 
-    # Monitor progress
-    writer.add_summary(train_summary, i)
-    writer.add_summary(valid_summary, i)
+      # Monitor progress
+      writer.add_summary(train_summary, i)
+      writer.add_summary(valid_summary, i)
 
     # Checkpoint periodically
     if i % 2000 == 0:

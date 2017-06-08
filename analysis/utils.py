@@ -17,8 +17,8 @@ def load_model(model_name, sess):
   saver = tf.train.import_meta_graph(model_name+'.meta', clear_devices=True)
   saver.restore(sess, model_name)
   em_input = tf.get_default_graph().get_tensor_by_name("input_1:0")
+  #vec_labels = tf.get_default_graph().get_tensor_by_name("conv2d_13/BiasAdd:0")
   vec_labels = tf.get_default_graph().get_tensor_by_name("conv2d_23/BiasAdd:0")
-
   return em_input, vec_labels
 
 def generate_vector_labels(input_tensor, output_tensor, input_data, sess):
