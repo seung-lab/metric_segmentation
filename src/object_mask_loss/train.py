@@ -2,9 +2,9 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from model import create_UNet
-from object_mask_loss.loss import object_mask_loss
-from provider import EMDataGenerator
+from .model import create_UNet
+from .loss import object_mask_loss
+from .provider import EMDataGenerator
 
 def train(params):
   """Trains and monitors net"""
@@ -23,7 +23,7 @@ def train(params):
   loss = object_mask_loss(vec_labels, mask_list_input, alpha)
 
   # Create train op
-  optimizer = tf.train.AdamOptimizer(learning_rate=0.001)#, momentum=0.9)
+  optimizer = tf.train.AdamOptimizer(learning_rate=0.0005)#, momentum=0.9)
   train_op = optimizer.minimize(loss)
 
   # Initialize data provider
@@ -52,13 +52,16 @@ def train(params):
     em_input_data_dev, mask_list_data_dev = em_dev.next_batch(1)
 
     # Infer + Backprop
-    feed_dict = {em_input: em_input_data_train,
-                  mask_list_input: mask_list_data_train}
+    phs = [em_input] + mask_list_input
+    dats = [em_input_data_train] + mask_list_data_train
+    feed_dict = dict((ph,dat) for ph,dat in zip(phs, dats))
+
     _, train_summary = sess.run([train_op, train_loss_summary], feed_dict=feed_dict)
 
     if i % 2 == 0:
-      feed_dict = {em_input: em_input_data_dev,
-                  mask_list_input: mask_list_data_dev}
+      dats = [em_input_data_dev] + mask_list_data_dev
+      feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
+
       valid_summary = sess.run(valid_loss_summary, feed_dict=feed_dict)
 
       # Monitor progress
@@ -66,25 +69,25 @@ def train(params):
       writer.add_summary(valid_summary, i)
 
     # Checkpoint periodically
-    if i % 2000 == 0:
+    if i % 5 == 0:
       print("Processed {} epochs.".format(i))
       # Save model
       saver.save(sess, os.path.join(model_dir, "model{}.ckpt".format(i)))
 
       # Save some sample images-train
-      feed_dict = {em_input: em_input_data_train,
-                    mask_list_input: mask_list_data_train}
-
+      dats = [em_input_data_train] + mask_list_data_train
+      feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
+      
       vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
       np.save(os.path.join(save_dir, 'vec_labels{}'.format(i)), vec_label_data)
-      np.save(os.path.join(save_dir, 'human_labels{}'.format(i)), human_label_data_train)
+      #np.save(os.path.join(save_dir, 'human_labels{}'.format(i)), human_label_data_train)
       np.save(os.path.join(save_dir, 'em_img{}'.format(i)), em_input_data_train)
 
       # Save some sample images-valid
-      feed_dict = {em_input: em_input_data_dev,
-                mask_list_input: mask_list_data_dev}
-
+      dats = [em_input_data_dev] + mask_list_data_dev
+      feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
+      
       vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
       np.save(os.path.join(save_dir, 'vec_labels_dev{}'.format(i)), vec_label_data)
-      np.save(os.path.join(save_dir, 'human_labels_dev{}'.format(i)), human_label_data_dev)
+      #np.save(os.path.join(save_dir, 'human_labels_dev{}'.format(i)), human_label_data_dev)
       np.save(os.path.join(save_dir, 'em_img_dev{}'.format(i)), em_input_data_dev)

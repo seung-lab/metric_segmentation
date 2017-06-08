@@ -2,17 +2,17 @@
 import os
 import sys
 import shutil
-from train import train
+from object_mask_loss.train import train
 
 ROOT_DIR = '/usr/people/kluther/Projects/metric_segmentation'
 DATA_DIR = '/usr/people/kluther/Projects/metric_segmentation/data'
 sys.path.append(os.path.join(ROOT_DIR, 'src'))
 
 # GPUs
-os.environ["CUDA_VISIBLE_DEVICES"]='3'
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 # Experiment parameters
-EXP_NAME = 'boundary_mask_on_augment_on_random_windows_lr_.001'
+EXP_NAME = 'object_mask_alpha_10.0'
 EXP_DIR =  os.path.join(ROOT_DIR, 'experiments', EXP_NAME)
 LOG_DIR = os.path.join(EXP_DIR, 'logs')
 MODEL_DIR = os.path.join(EXP_DIR, 'models')
@@ -29,8 +29,10 @@ params = {'in_height': 572, # Network parameters
           'log_dir': LOG_DIR,
           'model_dir': MODEL_DIR,
           'save_dir': SAVE_DIR,
-          'data_dir': DATA_DIR
-          }
+          'data_dir': DATA_DIR,
+          'n_sampled_objects': 10,
+          'alpha': 100.0
+}
 
 # Create directories
 if not os.path.exists(os.path.split(EXP_DIR)[0]):

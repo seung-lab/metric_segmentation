@@ -26,22 +26,14 @@ class EMDataGenerator:
   def next_batch(self, batch_size):
     """Return batch of images and their segmentations"""
     # Get batch
-    em_batch = []
-    seg_batch = []
-    mask_batch = []
-    for i in range(batch_size):
-      em, seg, mask = self.next_example()
-      em_batch.append(em)
-      seg_batch.append(seg)
-      mask_batch.append(mask)
+    assert(batch_size == 1)
+    em, mask_list = self.next_example()
 
-    em_batch = np.array(em_batch)
-    seg_batch = np.array(seg_batch)
-    mask_batch = np.array(mask_batch)
-
-    # Preprocess examples
-    # yield batch
-    return em_batch, seg_batch, mask_batch
+    # Reshape for batch size 1
+    em_batch = np.expand_dims(em, 0)
+    mask_list = [np.expand_dims(m,0) for m in mask_list]
+    
+    return em_batch, mask_list
 
   def next_example(self):
     """Returns next example and increments ptr
@@ -77,10 +69,12 @@ class EMDataGenerator:
     em_img = self.preprocess(em_img)
 
     # augment
-    imgs = augment.augment_example([imgs]+mask_list)
+    imgs = augment.augment_example([em_img]+mask_list)
     em_img = imgs[0]
     mask_list = imgs[1:]
 
+
+    #import pdb; pdb.set_trace()
     # increment ptr
     self._ptr += 1
 
@@ -93,7 +87,7 @@ class EMDataGenerator:
     all_ids = np.unique(seg_img)
     chosen_ids = np.random.choice(all_ids, K)
 
-    return [np.expand_dims(seg_img == ID,-1).astype(np.float32) for ID in chosen_ids]
+    return [(seg_img == ID).astype(np.float32) for ID in chosen_ids]
 
   def preprocess(self, img):
     """Preprocess img, does mean subtraction

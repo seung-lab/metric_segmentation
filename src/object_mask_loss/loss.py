@@ -24,7 +24,7 @@ def object_mask_loss(vectors, mask_list, alpha=1.0):
   inter_variance = compute_vector_variance(mean_vectors)
 
   # Compute loss
-  loss = tf.add(inter_variance, tf.multiply(alpha, intra_variance), name='loss')
+  loss = tf.add(intra_variance, tf.multiply(-alpha, inter_variance), name='loss')
 
   return loss
 
@@ -73,6 +73,6 @@ def compute_vector_variance(vector_list):
   mean_vector = tf.divide(tf.add_n(vector_list), len(vector_list))
   centered_vectors = [tf.subtract(v, mean_vector) for v in vector_list]
   centered_vectors_sq = [tf.square(v) for v in centered_vectors]
-  variance = tf.reduce_sum(tf.add_n(centered_vectors_sq))
+  variance = tf.divide(tf.reduce_sum(tf.add_n(centered_vectors_sq)), tf.cast(len(vector_list),tf.float32))
 
   return variance
