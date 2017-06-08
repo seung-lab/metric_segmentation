@@ -1,31 +1,27 @@
 """Provides some data augmentation"""
 import numpy as np
 
-def augment_example(em_img, seg_img):
+def augment_example(imgs):
   """Augments example.
   Args:
-    em_img: numpy array, shape-(x,y,1) of raw EM-image
-    seg_img: numpy array, shape-(x,y,1) of segmentations (integer ids)
+    imgs: list of numpy arrays, each of shape-(x,y,1) of raw EM-image
 
   Returns:
-    em_img: after augmentation
-    seg_img: after augmentation
+    imgs: list of images after augmentation (note the same augmentation is
+        applied to each image)
   """
   # Flips
   flips = (flip_x, flip_y)
   for flip in flips:
     if np.random.randint(0,2) == 1:
-      em_img = flip(em_img)
-      seg_img = flip(seg_img)
+      imgs = [flip(img) for img in imgs]
 
   # Rotations
   rotations = (identity, rotate_90, rotate_180, rotate_270)
   rotate = np.random.choice(rotations)
+  imgs = [rotate(img) for img in imgs]
 
-  em_img = rotate(em_img)
-  seg_img = rotate(seg_img)
-
-  return em_img, seg_img
+  return imgs
 
 
 def flip_x(img):
