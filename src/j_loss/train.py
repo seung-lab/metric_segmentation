@@ -32,7 +32,7 @@ def train(params):
     loss, outputs = long_range_loss_fun(vec_labels, human_labels, offsets, mask_input)
 
   # Create train op
-  optimizer = tf.train.AdamOptimizer(learning_rate=0.001)#, momentum=0.9)
+  optimizer = tf.train.AdamOptimizer(learning_rate=0.0005)#, momentum=0.9)
   train_op = optimizer.minimize(loss)
 
   # Initialize data provider
@@ -83,23 +83,3 @@ def train(params):
       print("Processed {} epochs.".format(i))
       # Save model
       saver.save(sess, os.path.join(model_dir, "model{}.ckpt".format(i)))
-
-      # Save some sample images-train
-      feed_dict = {em_input: em_input_data_train,
-                    human_labels: human_label_data_train,
-                    mask_input: mask_data_train}
-
-      vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
-      np.save(os.path.join(save_dir, 'vec_labels{}'.format(i)), vec_label_data)
-      np.save(os.path.join(save_dir, 'human_labels{}'.format(i)), human_label_data_train)
-      np.save(os.path.join(save_dir, 'em_img{}'.format(i)), em_input_data_train)
-
-      # Save some sample images-valid
-      feed_dict = {em_input: em_input_data_dev,
-                human_labels: human_label_data_dev,
-                mask_input: mask_data_dev}
-
-      vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
-      np.save(os.path.join(save_dir, 'vec_labels_dev{}'.format(i)), vec_label_data)
-      np.save(os.path.join(save_dir, 'human_labels_dev{}'.format(i)), human_label_data_dev)
-      np.save(os.path.join(save_dir, 'em_img_dev{}'.format(i)), em_input_data_dev)
