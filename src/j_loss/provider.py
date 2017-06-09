@@ -76,7 +76,7 @@ class EMDataGenerator:
     em_img = self.preprocess(em_img)
 
     # augment
-    em_img, seg_img = augment.augment_example(em_img, seg_img)
+    em_img, seg_img = augment.augment_example([em_img, seg_img])
     
     # increment ptr
     self._ptr += 1
@@ -109,7 +109,7 @@ class EMDataGenerator:
         segmentations: np array (n_images, x ,y)
     """
     em_images = h5py.File(os.path.join(directory, "image.h5"), 'r')
-    segmentations = h5py.File(os.path.join(directory, "human_labels.h5"), 'r')
+    segmentations = h5py.File(os.path.join(directory, "human_labels_split.h5"), 'r')
 
     if group == 'train':
       return em_images['main'][:192], segmentations['main'][:192]

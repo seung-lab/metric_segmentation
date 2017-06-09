@@ -2,7 +2,8 @@
 import os
 import sys
 import shutil
-from object_mask_loss.train import train
+#from object_mask_loss.train import train
+from j_loss.train import train
 
 ROOT_DIR = '/usr/people/kluther/Projects/metric_segmentation'
 DATA_DIR = '/usr/people/kluther/Projects/metric_segmentation/data'
@@ -12,7 +13,7 @@ sys.path.append(os.path.join(ROOT_DIR, 'src'))
 os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 # Experiment parameters
-EXP_NAME = 'object_mask_alpha_10.0'
+EXP_NAME = 'j_loss_boundary_mask_off_split_objects'
 EXP_DIR =  os.path.join(ROOT_DIR, 'experiments', EXP_NAME)
 LOG_DIR = os.path.join(EXP_DIR, 'logs')
 MODEL_DIR = os.path.join(EXP_DIR, 'models')

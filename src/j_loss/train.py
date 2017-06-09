@@ -2,9 +2,9 @@ import numpy as np
 import tensorflow as tf
 import os
 
-from model import create_UNet
-from loss.j_loss import long_range_loss_fun
-from provider import EMDataGenerator
+from .model import create_UNet
+from .loss import long_range_loss_fun
+from .provider import EMDataGenerator
 
 def train(params):
   """Trains and monitors net"""
