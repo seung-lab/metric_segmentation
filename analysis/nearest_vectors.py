@@ -21,7 +21,7 @@ def find_object_ids_centroids_vectors(id_imgs, vec_imgs):
 
     slc_ids = np.unique(id_img)
     #if i == 20: break
-    if i % 10 == 0: print(i)
+    #if i % 10 == 0: print(i)
 #    import pdb; pdb.set_trace()
     for slc_id in slc_ids:
       if slc_id != 0:
