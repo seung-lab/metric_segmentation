@@ -11,6 +11,7 @@ data_dir = '/usr/people/kluther/Projects/metric_segmentation/data/'
 seg_h5_original = h5py.File(os.path.join(data_dir,'human_labels.h5'),'r')
 seg_data_original = seg_h5_original['main']
 
+"""
 # Split objects that are not connected
 seg_data_split = np.zeros_like(seg_data_original, dtype=int)
 for i, slc in enumerate(seg_data_original):
@@ -27,5 +28,19 @@ for i, slc in enumerate(seg_data_original):
 
 # Save split segmentation 
 seg_h5 = h5py.File(os.path.join(data_dir, "human_labels_split.h5"),'w')
+seg_h5.create_dataset('main', data=seg_data_split)
+seg_h5.close()
+"""
+
+# Make a boundary map
+seg_data_split = np.zeros_like(seg_data_original, dtype=int)
+for i, slc in enumerate(seg_data_original):
+    if (i+1) % 5 == 0: print(i+1);
+    slc_split = np.ones_like(slc, dtype=int)
+    slc_split[slc==0] = 0
+    seg_data_split[i] = slc_split
+    
+# Save split segmentation
+seg_h5 = h5py.File(os.path.join(data_dir, "human_labels_boundary.h5"),'w')
 seg_h5.create_dataset('main', data=seg_data_split)
 seg_h5.close()

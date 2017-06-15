@@ -14,15 +14,18 @@ def object_mask_loss(vectors, mask_list, alpha=1.0):
   """
   # Compute mean vector for each object
   mean_vectors = [compute_object_mean(vectors, mask) for mask in mask_list]
-
+  [tf.summary.histogram('v{}'.format(i), v, collections=['monitor']) for i,v in enumerate(mean_vectors)]
+  
   # Compute variance of vectors for each object
   intra_variances = [compute_object_variance(vectors, mask, mean) for mask, mean in \
                 zip(mask_list, mean_vectors)]
-  intra_variance = tf.add_n(intra_variances)
-
+  intra_variance = tf.add_n(intra_variances, name='intra_variance')
+  tf.summary.scalar('intra_variance', intra_variance, collections=['monitor'])
+  
   # Compute variance between means of vectors
-  inter_variance = compute_vector_variance(mean_vectors)
-
+  inter_variance = compute_vector_variance(mean_vectors, name='inter_variance')
+  tf.summary.scalar('inter_variance', inter_variance, collections=['monitor'])
+  
   # Compute loss
   loss = tf.add(intra_variance, tf.multiply(-alpha, inter_variance), name='loss')
 
@@ -61,7 +64,7 @@ def compute_object_variance(vectors, mask, mean_vector):
 
   return tf.divide(sum_variances, num_variances)
 
-def compute_vector_variance(vector_list):
+def compute_vector_variance(vector_list, name=None):
   """Computes variance of vector_list
   Args:
     vector_list: list of tensors of shape (batch_size, embed_dim). These
@@ -73,6 +76,6 @@ def compute_vector_variance(vector_list):
   mean_vector = tf.divide(tf.add_n(vector_list), len(vector_list))
   centered_vectors = [tf.subtract(v, mean_vector) for v in vector_list]
   centered_vectors_sq = [tf.square(v) for v in centered_vectors]
-  variance = tf.divide(tf.reduce_sum(tf.add_n(centered_vectors_sq)), tf.cast(len(vector_list),tf.float32))
+  variance = tf.divide(tf.reduce_sum(tf.add_n(centered_vectors_sq)), tf.cast(len(vector_list),tf.float32), name=name)
 
   return variance

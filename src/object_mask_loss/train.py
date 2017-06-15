@@ -37,9 +37,9 @@ def train(params):
 
   # Create logging utils
   writer = tf.summary.FileWriter(log_dir, graph=tf.get_default_graph())
-  train_loss_summary = tf.summary.scalar("train_loss", loss)
+  train_loss_summary = tf.summary.scalar("train_loss", loss, ['monitor'])
   valid_loss_summary = tf.summary.scalar("val_loss", loss)
-  #summary_op = tf.summary.merge_all()
+  summary_op = tf.summary.merge_all('monitor')
 
   saver = tf.train.Saver(max_to_keep=100)
 
@@ -56,7 +56,7 @@ def train(params):
     dats = [em_input_data_train] + mask_list_data_train
     feed_dict = dict((ph,dat) for ph,dat in zip(phs, dats))
 
-    _, train_summary = sess.run([train_op, train_loss_summary], feed_dict=feed_dict)
+    _, summary = sess.run([train_op, summary_op], feed_dict=feed_dict)
 
     if i % 2 == 0:
       dats = [em_input_data_dev] + mask_list_data_dev
@@ -65,7 +65,7 @@ def train(params):
       valid_summary = sess.run(valid_loss_summary, feed_dict=feed_dict)
 
       # Monitor progress
-      writer.add_summary(train_summary, i)
+      writer.add_summary(summary, i)
       writer.add_summary(valid_summary, i)
 
     # Checkpoint periodically
@@ -73,21 +73,3 @@ def train(params):
       print("Processed {} epochs.".format(i))
       # Save model
       saver.save(sess, os.path.join(model_dir, "model{}.ckpt".format(i)))
-
-      # Save some sample images-train
-      dats = [em_input_data_train] + mask_list_data_train
-      feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
-      
-      vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
-      np.save(os.path.join(save_dir, 'vec_labels{}'.format(i)), vec_label_data)
-      #np.save(os.path.join(save_dir, 'human_labels{}'.format(i)), human_label_data_train)
-      np.save(os.path.join(save_dir, 'em_img{}'.format(i)), em_input_data_train)
-
-      # Save some sample images-valid
-      dats = [em_input_data_dev] + mask_list_data_dev
-      feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
-      
-      vec_label_data = sess.run(vec_labels, feed_dict=feed_dict)
-      np.save(os.path.join(save_dir, 'vec_labels_dev{}'.format(i)), vec_label_data)
-      #np.save(os.path.join(save_dir, 'human_labels_dev{}'.format(i)), human_label_data_dev)
-      np.save(os.path.join(save_dir, 'em_img_dev{}'.format(i)), em_input_data_dev)
