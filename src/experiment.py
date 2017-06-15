@@ -2,7 +2,7 @@
 import os
 import sys
 import shutil
-#from object_mask_loss.train import train
+#from object_mask_loss_2.train import train
 from j_loss.train import train
 
 ROOT_DIR = '/usr/people/kluther/Projects/metric_segmentation'
@@ -10,10 +10,10 @@ DATA_DIR = '/usr/people/kluther/Projects/metric_segmentation/data'
 sys.path.append(os.path.join(ROOT_DIR, 'src'))
 
 # GPUs
-os.environ["CUDA_VISIBLE_DEVICES"]='0'
+os.environ["CUDA_VISIBLE_DEVICES"]='3'
 
 # Experiment parameters
-EXP_NAME = 'j_loss_boundary_mask_off_split_objects'
+EXP_NAME = 'voronoi_affinity_64_embed_32'
 EXP_DIR =  os.path.join(ROOT_DIR, 'experiments', EXP_NAME)
 LOG_DIR = os.path.join(EXP_DIR, 'logs')
 MODEL_DIR = os.path.join(EXP_DIR, 'models')
@@ -24,7 +24,7 @@ params = {'in_height': 572, # Network parameters
           'in_width': 572,
           'out_height': 388,
           'out_width': 388,
-          'embed_dim': 64,
+          'embed_dim': 32,
           'exp_name': EXP_NAME,
           'exp_dir': EXP_DIR,
           'log_dir': LOG_DIR,
@@ -32,7 +32,7 @@ params = {'in_height': 572, # Network parameters
           'save_dir': SAVE_DIR,
           'data_dir': DATA_DIR,
           'n_sampled_objects': 10,
-          'alpha': 100.0
+          'alpha': 1.0
 }
 
 # Create directories

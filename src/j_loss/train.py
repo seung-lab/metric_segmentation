@@ -19,7 +19,7 @@ def train(params):
   human_labels = tf.placeholder(dtype=tf.int32, shape=(1,params['out_height'], params['out_width'], 1))
 
   # Create loss tensors
-  pix = (0,1,2,8)
+  pix = (0,1,2,8,32,64)
   offsets = []
   for i in pix:
     for j in pix:
