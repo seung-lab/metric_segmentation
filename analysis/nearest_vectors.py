@@ -25,7 +25,7 @@ def find_object_ids_centroids_vectors(id_imgs, vec_imgs):
 #    import pdb; pdb.set_trace()
     for slc_id in slc_ids:
       if slc_id != 0:
-        obj_id = i*2**15+slc_id
+        obj_id = i*2**20+slc_id
         mask = np.expand_dims(id_img == slc_id, axis=-1)
         centroid = compute_centroid(mask)
         centroid.append(i)
