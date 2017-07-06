@@ -19,6 +19,8 @@ def create_UNet(params):
   """
   height, width = params['in_height'], params['in_width']
   embed_dim = params['embed_dim']
+  padding = params['padding']
+  
   # Create layers
   inputs = Input(shape=(height, width, 1))
 

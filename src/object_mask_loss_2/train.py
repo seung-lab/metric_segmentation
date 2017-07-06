@@ -14,16 +14,18 @@ def train(params):
   save_dir = params['save_dir']
   K = params['n_sampled_objects']
   alpha = params['alpha']
-
+  beta = params['beta']
+  lr = params['learning_rate']
+  
   # Create input, output placeholders
   em_input, vec_labels = create_UNet(params)
   mask_list_input = [tf.placeholder(dtype=tf.float32, shape=(1,params['out_height'], params['out_width'], 1))]*K
 
   # Create loss
-  loss = object_mask_loss(vec_labels, mask_list_input,  alpha)
+  loss = object_mask_loss(vec_labels, mask_list_input,  alpha, beta)
 
   # Create train op
-  optimizer = tf.train.AdamOptimizer(learning_rate=0.00005)#, momentum=0.9)
+  optimizer = tf.train.AdamOptimizer(learning_rate=lr)#, momentum=0.9)
   train_op = optimizer.minimize(loss)
 
   # Initialize data provider
@@ -39,6 +41,7 @@ def train(params):
   writer = tf.summary.FileWriter(log_dir, graph=tf.get_default_graph())
   train_loss_summary = tf.summary.scalar("train_loss", loss, ['monitor'])
   valid_loss_summary = tf.summary.scalar("val_loss", loss)
+  mask_summary_op = tf.summary.image("mask", mask_list_input[0],max_outputs=1)
   summary_op = tf.summary.merge_all('monitor')
 
   saver = tf.train.Saver(max_to_keep=100)
@@ -56,8 +59,12 @@ def train(params):
     dats = [em_input_data_train] + mask_list_data_train
     feed_dict = dict((ph,dat) for ph,dat in zip(phs, dats))
 
-    _, summary = sess.run([train_op, summary_op], feed_dict=feed_dict)
-
+    _, summary, mask_sum = sess.run([train_op, summary_op, mask_summary_op], feed_dict=feed_dict)
+    #_, summary = sess.run([loss, summary_op], feed_dict=feed_dict)    
+    l = sess.run(loss, feed_dict=feed_dict)    
+    if l > 2E5:
+      np.save('train_{}_{}'.format(i, l), mask_list_data_train)
+    
     if i % 2 == 0:
       dats = [em_input_data_dev] + mask_list_data_dev
       feed_dict =dict((ph,dat) for ph,dat in zip(phs, dats))
@@ -67,9 +74,10 @@ def train(params):
       # Monitor progress
       writer.add_summary(summary, i)
       writer.add_summary(valid_summary, i)
+      writer.add_summary(mask_sum, i)
 
     # Checkpoint periodically
-    if i % 1000 == 0:
+    if i % 500 == 0:
       print("Processed {} epochs.".format(i))
       # Save model
       saver.save(sess, os.path.join(model_dir, "model{}.ckpt".format(i)))

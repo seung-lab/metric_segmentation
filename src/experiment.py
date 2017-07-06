@@ -6,15 +6,20 @@ import shutil
 from j_loss.train import train
 
 ROOT_DIR = '/usr/people/kluther/Projects/metric_segmentation'
-DATA_DIR = '/usr/people/kluther/Projects/metric_segmentation/data'
+
+EXP_PATH = '/usr/people/kluther/seungmount/research/kluther/metric_segmentation/experiments'
+DATA_DIR = '/usr/people/kluther/seungmount/research/kluther/metric_segmentation/data'
+
+
+
 sys.path.append(os.path.join(ROOT_DIR, 'src'))
 
 # GPUs
-os.environ["CUDA_VISIBLE_DEVICES"]='3'
+os.environ["CUDA_VISIBLE_DEVICES"]='0'
 
 # Experiment parameters
-EXP_NAME = 'voronoi_affinity_64_embed_32'
-EXP_DIR =  os.path.join(ROOT_DIR, 'experiments', EXP_NAME)
+EXP_NAME = 'test'
+EXP_DIR =  os.path.join(EXP_PATH, EXP_NAME)
 LOG_DIR = os.path.join(EXP_DIR, 'logs')
 MODEL_DIR = os.path.join(EXP_DIR, 'models')
 SAVE_DIR = os.path.join(EXP_DIR, 'saved')
@@ -25,14 +30,17 @@ params = {'in_height': 572, # Network parameters
           'out_height': 388,
           'out_width': 388,
           'embed_dim': 32,
+          'padding': 'SAME',
+          'learning_rate': 0.0005,
+          'n_sampled_objects': 1,
+          'alpha': 1.0,
+          'beta': 1.0,
           'exp_name': EXP_NAME,
           'exp_dir': EXP_DIR,
           'log_dir': LOG_DIR,
           'model_dir': MODEL_DIR,
           'save_dir': SAVE_DIR,
-          'data_dir': DATA_DIR,
-          'n_sampled_objects': 10,
-          'alpha': 1.0
+          'data_dir': DATA_DIR
 }
 
 # Create directories

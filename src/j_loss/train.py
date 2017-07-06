@@ -19,7 +19,7 @@ def train(params):
   human_labels = tf.placeholder(dtype=tf.int32, shape=(1,params['out_height'], params['out_width'], 1))
 
   # Create loss tensors
-  pix = (0,1,2,8,32,64)
+  pix = (0,1,2,8,32,64,128)#,256)
   offsets = []
   for i in pix:
     for j in pix:
@@ -32,7 +32,7 @@ def train(params):
     loss, outputs = long_range_loss_fun(vec_labels, human_labels, offsets, mask_input)
 
   # Create train op
-  optimizer = tf.train.AdamOptimizer(learning_rate=0.0005)#, momentum=0.9)
+  optimizer = tf.train.AdamOptimizer(learning_rate=params['learning_rate'])
   train_op = optimizer.minimize(loss)
 
   # Initialize data provider
@@ -60,7 +60,6 @@ def train(params):
   for i in range(max_steps):
     # Get Data
     em_input_data_train, human_label_data_train, mask_data_train = em_train.next_batch(1)
-    em_input_data_dev, human_label_data_dev, mask_data_dev = em_dev.next_batch(1)
 
     # Infer + Backprop
     feed_dict = {em_input: em_input_data_train,
@@ -68,7 +67,9 @@ def train(params):
                   mask_input: mask_data_train}
     _, train_summary = sess.run([train_op, train_loss_summary], feed_dict=feed_dict)
 
+    # Monitor Progress
     if i % 2 == 0:
+      em_input_data_dev, human_label_data_dev, mask_data_dev = em_dev.next_batch(1)
       feed_dict = {em_input: em_input_data_dev,
                   human_labels: human_label_data_dev,
                   mask_input: mask_data_dev}
@@ -78,7 +79,7 @@ def train(params):
       writer.add_summary(train_summary, i)
       writer.add_summary(valid_summary, i)
 
-    # Checkpoint periodically
+    # Checkpoint
     if i % 2000 == 0:
       print("Processed {} epochs.".format(i))
       # Save model

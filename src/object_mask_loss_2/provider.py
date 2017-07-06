@@ -115,6 +115,7 @@ class EMDataGenerator:
         em_images: np array (n_images, x, y)
         segmentations: np array (n_images, x ,y)
     """
+    
     em_images = h5py.File(os.path.join(directory, "image.h5"), 'r')
     segmentations = h5py.File(os.path.join(directory, "human_labels_split.h5"), 'r')
 
@@ -122,3 +123,12 @@ class EMDataGenerator:
       return em_images['main'][:192], segmentations['main'][:192]
     elif group == 'dev':
       return em_images['main'][192:], segmentations['main'][192:]
+    """
+    em_images = h5py.File(os.path.join(directory, "voronoi_boundary.h5"), 'r')
+    segmentations = h5py.File(os.path.join(directory, "voronoi_segmentation.h5"), 'r')
+
+    if group == 'train':
+      return em_images['main'][:16], segmentations['main'][:16]
+    elif group == 'dev':
+      return em_images['main'][16:], segmentations['main'][16:]
+    """
